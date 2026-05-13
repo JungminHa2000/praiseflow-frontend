@@ -6,6 +6,9 @@ import HarmonyNotation from '../components/HarmonyNotation.vue'
 
 const route = useRoute()
 const folderId = (route.query.folderId as string) || ''
+
+const noFolder = !folderId
+
 // -- DUPLICATE STATE --
 const duplicateWarning = ref<any>(null)
 
@@ -145,6 +148,24 @@ function downloadAsPdf() {
     >
       <h3 style="font-size: 16px; margin-bottom: 1rem">1. Upload your file</h3>
 
+      <div
+        v-if="noFolder"
+        style="
+          background: #fef3c7;
+          border-left: 3px solid #f59e0b;
+          padding: 0.75rem 1rem;
+          border-radius: 6px;
+          margin-bottom: 1rem;
+          font-size: 13px;
+          color: #78350f;
+        "
+      >
+        <p>
+          Please go to <strong>Collections</strong> and click <strong>"+ Add song"</strong> on a
+          folder to upload. Songs must belong to a folder.
+        </p>
+      </div>
+
       <div style="margin-bottom: 1rem">
         <label style="display: block; margin-bottom: 0.4rem; font-weight: 500; font-size: 14px">
           Song title
@@ -162,7 +183,7 @@ function downloadAsPdf() {
         </p>
       </div>
 
-      <button @click="handleUpload" :disabled="isUploading">
+      <button @click="handleUpload()" :disabled="isUploading || noFolder">
         {{ isUploading ? 'Uploading...' : 'Upload' }}
       </button>
 
