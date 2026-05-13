@@ -25,6 +25,9 @@ const isGeneratingImprov = ref(false)
 const improv = ref<any>(null)
 const improvError = ref('')
 
+// -- FILE VIEWER STATE --
+const showOriginal = ref(false)
+
 // -- SHARE STATE --
 const shareUrl = ref('')
 const isSharing = ref(false)
@@ -207,6 +210,48 @@ function downloadAsPdf() {
           <button @click="copyShareLink" style="font-size: 12px; padding: 0.4rem 0.8rem">
             Copy
           </button>
+        </div>
+      </div>
+
+      <!-- Original sheet music viewer -->
+      <div
+        style="
+          background: white;
+          padding: 1.5rem;
+          border-radius: 8px;
+          border: 1px solid #e5e7eb;
+          margin-bottom: 1.5rem;
+        "
+      >
+        <div
+          style="
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+          "
+        >
+          <h3 style="font-size: 16px">Original sheet music</h3>
+          <button
+            @click="showOriginal = !showOriginal"
+            style="font-size: 12px; padding: 0.3rem 0.8rem; background: #f3f4f6; color: #1a1a1a"
+            class="no-print"
+          >
+            {{ showOriginal ? 'Hide' : 'Show' }}
+          </button>
+        </div>
+        <div v-if="showOriginal">
+          <img
+            v-if="piece.fileType.startsWith('image/')"
+            :src="`http://localhost:3000/${piece.fileUrl}`"
+            style="max-width: 100%; border-radius: 6px; border: 1px solid #e5e7eb"
+            alt="Original sheet music"
+          />
+          <iframe
+            v-else-if="piece.fileType === 'application/pdf'"
+            :src="`http://localhost:3000/${piece.fileUrl}`"
+            style="width: 100%; height: 600px; border: 1px solid #e5e7eb; border-radius: 6px"
+          ></iframe>
         </div>
       </div>
 

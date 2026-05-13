@@ -6,6 +6,8 @@ import HarmonyNotation from '../components/HarmonyNotation.vue'
 
 const route = useRoute()
 const folderId = (route.query.folderId as string) || ''
+// -- DUPLICATE STATE --
+const duplicateWarning = ref<any>(null)
 
 // -- UPLOAD STATE --
 const title = ref('')
@@ -34,7 +36,7 @@ function handleFileSelect(event: Event) {
   }
 }
 
-async function handleUpload() {
+async function handleUpload(allowDuplicate = false) {
   if (!selectedFile.value || !title.value) {
     errorMessage.value = 'Please choose a file and enter a title'
     return
@@ -45,11 +47,15 @@ async function handleUpload() {
   uploadResult.value = null
   analysis.value = null
   improv.value = null
+  duplicateWarning.value = null
 
   const formData = new FormData()
   formData.append('title', title.value)
   formData.append('folderId', folderId)
   formData.append('file', selectedFile.value)
+  if (allowDuplicate) {
+    formData.append('allowDuplicate', 'true')
+  }
 
   try {
     const response = await api.post('/upload', formData, {
@@ -57,7 +63,11 @@ async function handleUpload() {
     })
     uploadResult.value = response.data.piece
   } catch (err: any) {
-    errorMessage.value = err.response?.data?.error || 'Upload failed'
+    if (err.response?.status === 409) {
+      duplicateWarning.value = err.response.data
+    } else {
+      errorMessage.value = err.response?.data?.error || 'Upload failed'
+    }
   } finally {
     isUploading.value = false
   }
@@ -159,6 +169,42 @@ function downloadAsPdf() {
       <p v-if="errorMessage" style="color: #dc2626; margin-top: 1rem; font-size: 14px">
         {{ errorMessage }}
       </p>
+      <!-- Duplicate warning -->
+      <div
+        v-if="duplicateWarning"
+        style="
+          background: #fef3c7;
+          border-left: 3px solid #f59e0b;
+          padding: 1rem;
+          border-radius: 6px;
+          margin-top: 1rem;
+          font-size: 13px;
+          color: #78350f;
+        "
+      >
+        <p style="font-weight: 500; margin-bottom: 0.5rem">⚠ Duplicate file detected</p>
+        <p style="margin-bottom: 0.75rem">{{ duplicateWarning.message }}</p>
+        <div style="display: flex; gap: 0.5rem">
+          <button
+            @click="handleUpload(true)"
+            style="font-size: 12px; padding: 0.4rem 0.8rem; background: #1a1a1a"
+          >
+            Upload anyway
+          </button>
+          <button
+            @click="duplicateWarning = null"
+            style="
+              font-size: 12px;
+              padding: 0.4rem 0.8rem;
+              background: white;
+              color: #1a1a1a;
+              border: 1px solid #d1d5db;
+            "
+          >
+            Cancel
+          </button>
+        </div>
+      </div>
 
       <div
         v-if="uploadResult"

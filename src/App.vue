@@ -25,7 +25,8 @@ function handleLogout() {
     <h1 style="font-size: 1.5rem; font-weight: 600">🎵 PraiseFlow</h1>
     <nav style="display: flex; gap: 1rem; align-items: center">
       <template v-if="auth.isLoggedIn">
-        <RouterLink to="/" style="text-decoration: none; color: #1a1a1a">Library</RouterLink>
+        <RouterLink to="/" style="text-decoration: none; color: #1a1a1a">Collections</RouterLink>
+        <RouterLink to="/library" style="text-decoration: none; color: #1a1a1a">Library</RouterLink>
         <RouterLink to="/upload" style="text-decoration: none; color: #1a1a1a">Upload</RouterLink>
         <span style="color: #6b7280; font-size: 13px">{{ auth.user?.name }}</span>
         <a @click="handleLogout" style="color: #dc2626; font-size: 13px; cursor: pointer"

@@ -4,14 +4,20 @@ import UploadView from '../views/UploadView.vue'
 import AuthView from '../views/AuthView.vue'
 import PieceView from '../views/PieceView.vue'
 import SharedView from '../views/SharedView.vue'
+import LibraryView from '../views/LibraryView.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
     {
       path: '/',
-      name: 'home',
+      name: 'collections',
       component: HomeView,
+    },
+    {
+      path: '/library',
+      name: 'library',
+      component: LibraryView,
     },
     {
       path: '/upload',
