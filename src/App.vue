@@ -1,8 +1,14 @@
 <script setup lang="ts">
-import { RouterView, RouterLink } from 'vue-router'
+import { RouterView, RouterLink, useRouter } from 'vue-router'
 import { useAuthStore } from './stores/auth'
 
 const auth = useAuthStore()
+const router = useRouter()
+
+function handleLogout() {
+  auth.logout()
+  router.push('/auth')
+}
 </script>
 
 <template>
@@ -22,7 +28,7 @@ const auth = useAuthStore()
         <RouterLink to="/" style="text-decoration: none; color: #1a1a1a">Library</RouterLink>
         <RouterLink to="/upload" style="text-decoration: none; color: #1a1a1a">Upload</RouterLink>
         <span style="color: #6b7280; font-size: 13px">{{ auth.user?.name }}</span>
-        <a @click="auth.logout()" style="color: #dc2626; font-size: 13px; cursor: pointer"
+        <a @click="handleLogout" style="color: #dc2626; font-size: 13px; cursor: pointer"
           >Log out</a
         >
       </template>
